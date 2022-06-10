@@ -7,7 +7,7 @@ function App() {
 
 
     console.log('env: ', import.meta.env);
-    console.log('VITE_DESC: ', import.meta.env.VITE_DESC);
+    //console.log('VITE_DESC: ', import.meta.env.VITE_DESC);
     // <p>Hello Vite + ver.{__APP_VERSION__}</p>
     // <p>Hello Vite + ver.{import.meta.env.VITE_APP_VERSION}</p>
 
