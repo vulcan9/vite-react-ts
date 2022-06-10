@@ -21,13 +21,13 @@
         "jsx": "react-jsx",
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "types": ["vite/client"]
     },
 
     "참고-compilerOptions": {
         "baseUrl": "./",
-        "sourceMap": true,
-        "type": ["vite/client"]
+        "sourceMap": true
     },
 
     "include": [
