@@ -21,20 +21,28 @@
         "jsx": "react-jsx",
         "types": ["vite/client"],
         "paths": {
+            "@/*": ["./src/*"],
             "@ss/*": ["./packages/*"]
-        }
+        },
+        "rootDir": "src"
     },
-    "컴파일 옵션 참고": {
-        "rootDir": "시작점",
-        "removeComments": "true: 컴파일할 때 주석 제거",
-        "noImplicitAny": "true:  함수의 파라미터에 any 타입을 사용할 수 없음"
-    },
+
     "include": [
-        "packages"
+        "src"
     ],
     "references": [
         {
             "path": "./tsconfig.node.json"
         }
-    ]
+    ],
+
+    "프로젝트에 적용할때": {
+        "extends": "@ss/config/tsconfig.json",
+        "compilerOptions": {
+            "rootDir": "src"
+        },
+        "include": [
+            "src"
+        ]
+    }
 }

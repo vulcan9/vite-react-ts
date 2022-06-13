@@ -12,7 +12,11 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 
 const config = {
     //root: process.cwd(),
-    //base: '/',
+
+    // assets 경로에 prefix로 붙음
+    // http://localhost:3000/packages/web/ 로 리다이렉팅 됨
+    //base: '/packages/web/',
+
     //mode: process.env.NODE_ENV,
 
     // '.env' 파일이 로드되는 디렉터리입니다.
@@ -157,10 +161,10 @@ function development(): UserConfig {
     } = process.env;
 
     return _.merge(common(), {
-        //...config,
+        // 개발 모드에서는 상대 경로 prefix 안먹히는것 같음 (./)
+        //base: '/packages/web/',
 
         server: {
-            //...(config as any).server,
 
             port: PORT,
             host: HOST,
@@ -173,10 +177,10 @@ function development(): UserConfig {
                 //},
 
                 // 웹소켓 또는 socket.io 프록시
-                '/socket.io': {
-                    target: 'ws://localhost:5173',
-                    ws: true
-                }
+                //'/socket.io': {
+                //    target: 'ws://localhost:5173',
+                //    ws: true
+                //}
             }
         }
     });
@@ -184,24 +188,20 @@ function development(): UserConfig {
 
 function production(): UserConfig {
 
+    console.log(`production: root폴더/dist 폴더에 output 생성됨`);
+    
     return _.merge(common(), {
-        //...config,
-
         //root: process.cwd(),
         //base: '/web/',
+        base: './',
 
         build: {
-            //...(config as any).build,
-
-            //outDir: 'dist/web',
             //sourcemap: false,
 
-            //rollupOptions: {
-            //    input: {
-            //        main: resolve(__dirname, 'index.html'),
-            //        app: resolve(__dirname, 'dist/app/index.html')
-            //    }
-            //}
+            // preview를 실행할려면 outDir 설정하지 않는다.
+            // (프로젝트 폴더/dist 폴더에 output 생성한다)
+            //outDir: '../../dist/web',
+            //emptyOutDir: true,
         },
     });
 }
@@ -213,6 +213,7 @@ function production(): UserConfig {
 export default defineConfig(({command, mode}) => {
 
     console.log(`mode: ${mode} (${command})`);
+    console.log(`cwd: ${process.cwd()}`);
 
     (() => {
         /*
@@ -227,17 +228,19 @@ export default defineConfig(({command, mode}) => {
         console.log("NODE_ENV:", process.env.NODE_ENV);
 
         const modePath = (mode === 'development') ? 'dev.local' : 'prod';
-        let file = resolve(process.cwd(), `./src/.env.${modePath}`);
+        //let file = resolve(process.cwd(), `./packages/web/.env.${modePath}`);
+        //let file = resolve(process.cwd(), `./.env.${modePath}`);
+        let file = resolve(`./.env.${modePath}`);
         //let file = `./src/.env.${mode}`;
 
         dotenv.config({path: file});
     })();
 
     // 개발 서버 설정
-    if (command === 'serve') return _.merge(config, development());
+    if (mode === 'development') return _.merge(config, development());
 
     // 빌드 설정
-    if (command === 'build') return _.merge(config, production());
+    return _.merge(config, production());
 })
 
 //----------------------
