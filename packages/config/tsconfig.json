@@ -9,7 +9,6 @@
         ],
         "allowJs": false,
         "skipLibCheck": true,
-        "esModuleInterop": false,
         "allowSyntheticDefaultImports": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
@@ -17,32 +16,35 @@
         "moduleResolution": "Node",
         "resolveJsonModule": true,
         "isolatedModules": true,
+
+        "esModuleInterop": false,
         "noEmit": true,
+
         "jsx": "react-jsx",
-        "types": ["vite/client"],
+        "types": ["vite/client", "node"],
         "paths": {
             "@/*": ["./src/*"],
-            "@ss/*": ["./packages/*"]
-        },
-        "rootDir": "src"
+            "@ss/*": ["../../packages/*"]
+        }
     },
 
-    "include": [
-        "src"
-    ],
-    "references": [
-        {
-            "path": "./tsconfig.node.json"
-        }
-    ],
+    "컴파일 옵션 참고": {
+        "rootDir": "시작점",
+        "removeComments": "true: 컴파일할 때 주석 제거",
+        "noImplicitAny": "true:  함수의 파라미터에 any 타입을 사용할 수 없음"
+    },
 
     "프로젝트에 적용할때": {
         "extends": "@ss/config/tsconfig.json",
         "compilerOptions": {
-            "rootDir": "src"
+            "sourceMap": false,
+            //"rootDir": "src"
         },
         "include": [
             "src"
+        ],
+        "references": [
+            {"path": "./tsconfig.node.json"}
         ]
     }
 }

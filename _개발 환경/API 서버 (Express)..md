@@ -3,19 +3,9 @@
 ```shell
 npm init -w packages/server
 npm i -S express nodemon -w @ss/server
-npm i -S concurrently
 ```
 
 [`nodemon`](https://www.npmjs.com/package/nodemon) : 개발시 변경사항을 실시간으로 업데이트 해주기 위한 모듈
-[`concurrently`](https://github.com/open-cli-tools/concurrently) : 여러 가지 명령어를 동시에 실행 시키기 위한 모듈
-
-```shell
-# & : 병렬 실행 에는 (단일 앰퍼샌드)를 사용
-# npm run 명령어1 & npm run 명령어2 ...
-# 또는 (--kill-others: 실패시 다른 프로세스 실행 안함)
-# concurrently --kill-others \"npm run 명령어1\" \"npm run 명령어2\" ...
-concurrently "npm run dev -w @ss/web" "npm run build -w @ss/web" "npm run preview -w @ss/web"
-```
 
 ## 서버 동작 테스트
 
@@ -87,6 +77,7 @@ npm run dev -w @ss/server
 
 ## 프로젝트에 typescript 사용 설정
 
+이부분은 참고용으로 기록함 (vite를 사용할 것이므로...)  
 참고 [타입스크립트(typescript) 프로젝트 세팅하기](https://elvanov.com/2524)
 
 ```shell

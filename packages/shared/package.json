@@ -1,8 +1,24 @@
 {
-  "name": "@ss/shared",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {},
-  "author": "",
-  "license": "ISC"
+    "name": "@ss/shared",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {},
+    "author": "",
+    "license": "ISC",
+
+    "라이브러리 모드 참고": {
+        "files": [
+            "dist"
+        ],
+        "main": "./dist/shared.umd.js",
+        "module": "./dist/shared.es.js",
+        "types": "./dist/types/index.d.ts",
+        "exports": {
+            ".": {
+                "import": "./dist/shared.es.js",
+                "require": "./dist/shared.umd.js"
+            }
+        }
+    }
+
 }

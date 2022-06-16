@@ -2,7 +2,7 @@
 // https://github.com/motdotla/dotenv
 import * as dotenv from "dotenv";
 import {resolve} from 'path'
-import {defineConfig, UserConfig} from 'vite'
+import {defineConfig, loadEnv, UserConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import legacy from '@vitejs/plugin-legacy'
 import * as _ from 'lodash'
@@ -63,6 +63,9 @@ const config = {
         // vite-plugin-mkcert
         // for vite https development services. (install the local CA certificate)
         //mkcert()
+
+        // https://github.com/xiaoxian521/vite-plugin-remove-console
+        //removeConsole()
     ],
 
     resolve: {
@@ -127,150 +130,39 @@ const config = {
     // SSR 옵션
     // https://vitejs-kr.github.io/config/ssr-options.html#ssr-external
     //ssr: {}
+
+    // 소스에서 치환할 문자열을 정의
+    // https://esbuild.github.io/api/#define
+    // 치환될 문자열은 ts 파일에서 타입체크를 통과 시켜 주어야함 (.d.ts 파일)
+    //define: {
+    //    "__APP_VERSION__": JSON.stringify(APP_VERSION) // '"'+ APP_VERSION +'"'
+    //}
 }
 
-function common(): UserConfig {
-
-    console.log("APP_VERSION:", process.env.VITE_DESC);
-
-    return {
-
-    }
-
-    /*
-    const {
-        APP_VERSION = '0.0.0'
-    } = process.env;
-
-    return {
-        // 소스에서 치환할 문자열을 정의
-        // https://esbuild.github.io/api/#define
-        // 치환될 문자열은 ts 파일에서 타입체크를 통과 시켜 주어야함 (.d.ts 파일)
-        define: {
-            "__APP_VERSION__": JSON.stringify(APP_VERSION) // '"'+ APP_VERSION +'"'
-        },
-    }
-    */
-}
-
-function development(): UserConfig {
-
-    const {
-        PORT = 3000,
-        HOST = '0.0.0.0'
-    } = process.env;
-
-    return _.merge(common(), {
-        // 개발 모드에서는 상대 경로 prefix 안먹히는것 같음 (./)
-        //base: '/packages/web/',
-
-        server: {
-
-            port: PORT,
-            host: HOST,
-
-            // https://vitejs-kr.github.io/config/server-options.html#server-proxy
-            proxy: {
-                //'/api': {
-                //    target: `http://localhost:${PORT}`,
-                //    rewrite: path => path.replace(/^\/api/, '')
-                //},
-
-                // 웹소켓 또는 socket.io 프록시
-                //'/socket.io': {
-                //    target: 'ws://localhost:5173',
-                //    ws: true
-                //}
-            }
-        }
-    });
-}
-
-function production(): UserConfig {
-
-    console.log(`production: root폴더/dist 폴더에 output 생성됨`);
-    
-    return _.merge(common(), {
-        //root: process.cwd(),
-        //base: '/web/',
-        base: './',
-
-        build: {
-            //sourcemap: false,
-
-            // preview를 실행할려면 outDir 설정하지 않는다.
-            // (프로젝트 폴더/dist 폴더에 output 생성한다)
-            //outDir: '../../dist/web',
-            //emptyOutDir: true,
-        },
-    });
-}
-
-//----------------------
-// 조건부 설정
-//----------------------
-
-export default defineConfig(({command, mode}) => {
-
-    console.log(`mode: ${mode} (${command})`);
-    console.log(`cwd: ${process.cwd()}`);
-
-    (() => {
-        /*
-        // `mode`를 기반으로 env 파일을 불러옴
-        // import.meta.env에는 변수 적용되지 않음
-        const envDir = resolve(process.cwd(), 'src');
-        const env = loadEnv('dev', envDir, '')
-        console.log("envDir:", envDir);
-        console.log("APP_VERSION:", env.APP_VERSION);
-        */
-        process.env.NODE_ENV = mode;
-        console.log("NODE_ENV:", process.env.NODE_ENV);
-
-        const modePath = (mode === 'development') ? 'dev.local' : 'prod';
-        //let file = resolve(process.cwd(), `./packages/web/.env.${modePath}`);
-        //let file = resolve(process.cwd(), `./.env.${modePath}`);
-        let file = resolve(`./.env.${modePath}`);
-        //let file = `./src/.env.${mode}`;
-
-        dotenv.config({path: file});
-    })();
-
-    // 개발 서버 설정
-    if (mode === 'development') return _.merge(config, development());
-
-    // 빌드 설정
-    return _.merge(config, production());
-})
-
+/*
 //----------------------
 // 인텔리센스 설정
 //----------------------
 
-/*
 export default defineConfig({
     plugins: [react()]
 })
-*/
 
 //----------------------
 // 비동기 설정
 //----------------------
 
-/*
 export default defineConfig(async ({ command, mode }) => {
     const data = await asyncFunction();
     return {
         // Vite 설정 값 전달
     }
 })
-*/
 
 //----------------------
 // 환경 변수
 //----------------------
 
-/*
 export default defineConfig(({ command, mode }) => {
     // loadEnv 헬퍼를 사용해 .env 파일을 불러올 수도 있음
     // 현재 작업 디렉터리의 `mode`를 기반으로 env 파일을 불러옴
@@ -285,3 +177,94 @@ export default defineConfig(({ command, mode }) => {
     }
 })
 */
+
+//----------------------
+// 조건부 설정
+//----------------------
+
+export default defineConfig(({command, mode}) => {
+
+    console.log(`(vite) mode: ${mode} (${command})`);
+    console.log(`(vite) cwd: ${process.cwd()}`);
+
+    (() => {
+        const isDev = (mode === 'development');
+        const envDir = resolve(process.cwd(), '../config');
+        if (isDev) {
+            // `mode`를 기반으로 env 파일을 불러옴
+            const env = loadEnv('dev.local', envDir, '');
+            // loadEnv: import.meta.env에 VITE_ 변수 적용 되도록 직접 할당해 주어야함
+            process.env = {...process.env, ...env};
+        }
+
+        // dotenv: import.meta.env에 VITE_ 변수 자동 적용됨
+        const modePath = (isDev) ? 'dev' : 'prod';
+        let file = (`${envDir}/.env.${modePath}`);
+        dotenv.config({path: file});
+    })();
+
+    //process.env.NODE_ENV = mode;
+    console.log("(vite) NODE_ENV:", process.env.NODE_ENV);
+    console.log("(vite) APP_VERSION:", process.env.VITE_DESC);
+
+    // 개발 서버 설정
+    if (mode === 'development') return _.merge(config, development());
+
+    // 빌드 설정
+    return _.merge(config, production());
+})
+
+function development(): UserConfig {
+
+    const HOST = (process.env.HOST || '0.0.0.0');
+    const API_PORT = <number>(process.env.VITE_WWW_PORT || 4000);
+    const WEB_DEV_PORT = <number>(process.env.WEB_DEV_PORT || 3000);
+
+    return {
+        // 개발 모드에서는 상대 경로 prefix 안먹히는것 같음 (./)
+        //base: '/packages/web/',
+
+        server: {
+
+            host: HOST,
+            port: WEB_DEV_PORT,
+
+            // https://vitejs-kr.github.io/config/server-options.html#server-proxy
+            proxy: {
+                '/api': {
+                    target: `http://localhost:${API_PORT}`,
+                    changeOrigin: true,
+                    //rewrite: path => path.replace(/^\/api/, '')
+                },
+
+                // 웹소켓 또는 socket.io 프록시
+                //'/socket.io': {
+                //    target: 'ws://localhost:5173',
+                //    ws: true
+                //}
+            }
+        }
+    };
+}
+
+function production(): UserConfig {
+
+    console.log(`(vite) production: root폴더/dist 폴더에 output 생성됨`);
+
+    return {
+        //root: process.cwd(),
+        //base: '/web/',
+        base: './',
+
+        build: {
+            //sourcemap: false,
+
+            // preview를 실행할려면 outDir 설정하지 않는다.
+            // (프로젝트 폴더/dist 폴더에 output 생성한다)
+            //outDir: '../../dist/web',
+            //emptyOutDir: true,
+        },
+    };
+}
+
+

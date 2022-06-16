@@ -1,7 +1,6 @@
 {
     "extends": "@ss/config/tsconfig.json",
 
-
     "compilerOptions": {
         "sourceMap": false
     },
