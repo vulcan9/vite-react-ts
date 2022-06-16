@@ -77,7 +77,7 @@ npm run dev -w @ss/server
 
 ## 프로젝트에 typescript 사용 설정
 
-이부분은 참고용으로 기록함 (vite를 사용할 것이므로...)  
+이부분은 참고용으로 기록함 (vite를 사용할 것이므로 건너뛰어도 됨)  
 참고 [타입스크립트(typescript) 프로젝트 세팅하기](https://elvanov.com/2524)
 
 ```shell

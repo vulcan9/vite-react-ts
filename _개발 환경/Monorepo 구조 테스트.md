@@ -184,6 +184,7 @@ base: './'
 
 ## 라이브러리 모드 빌드 테스트
 
+NPM에 라이브러리로 등록하기 위한 빌드임
 https://vitejs-kr.github.io/guide/build.html#library-mode
 
 * `web`과 라이브러리 각각 독자적으로 빌드 (배포) 가능한지 확인
