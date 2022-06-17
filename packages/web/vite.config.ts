@@ -8,137 +8,6 @@ import legacy from '@vitejs/plugin-legacy'
 import * as _ from 'lodash'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
-// https://vitejs.dev/config/
-
-const config = {
-    //root: process.cwd(),
-
-    // assets 경로에 prefix로 붙음
-    // http://localhost:3000/packages/web/ 로 리다이렉팅 됨
-    //base: '/packages/web/',
-
-    //mode: process.env.NODE_ENV,
-
-    // '.env' 파일이 로드되는 디렉터리입니다.
-    // 절대 경로 또는 프로젝트 루트에 상대적인 경로일 수 있습니다.
-    //envDir: '/',
-    //envPrefix: 'VITE_',
-
-    // 정적 에셋들을 제공하는 디렉터리
-    // 이 디렉터리의 파일들은 개발 중에는 / 에서 제공되고 빌드 시에는 outDir의 루트로 복사되며,
-    // 변형 없이 언제나 있는 그대로 제공되거나 복사됩니다.
-    // 값은 절대 파일 시스템 경로 또는 프로젝트 루트의 상대적인 경로중 하나가 될 수 있습니다.
-    //publicDir: 'public'
-
-    // 정적 에셋 가져오기
-    // 빌트인 에셋 형식 목록: https://github.com/vitejs/vite/blob/main/packages/vite/src/node/constants.ts
-    //assetsInclude: ['**/*.gltf'],
-
-    plugins: [
-        react(),
-
-        // vite-tsconfig-paths
-        // resolve imports using TypeScript's path mapping.
-        // https://www.npmjs.com/package/vite-tsconfig-paths
-        // 일반적으로 Typescript 프로젝트에서는
-        // import * as ssl from '../../../services/ssl' 과 같은 import 경로를 피하기 위해
-        // 절대 경로 import를 많이 사용합니다.
-        // tsconfig.json 을 수정하면
-        // import * as ssl from '@src/services/ssl' 처럼 절대 경로로 import 할 수 있습니다.
-        tsconfigPaths(),
-
-        // 레거시 브라우저의 경우 `@vitejs/plugin-legacy` 플러그인을 이용
-        // 레거시 청크는 브라우저가 ESM을 지원하지 않는 경우에만 사용됨
-        // https://www.npmjs.com/package/@vitejs/plugin-legacy
-        legacy(),
-
-        //viteMockServe({
-        //    mockPath: 'mock',
-        //    supportTs: true,
-        //    watchFiles: true,
-        //    localEnabled: command === 'serve',
-        //    logger: true,
-        //}),
-
-        // vite-plugin-mkcert
-        // for vite https development services. (install the local CA certificate)
-        //mkcert()
-
-        // https://github.com/xiaoxian521/vite-plugin-remove-console
-        //removeConsole()
-    ],
-
-    resolve: {
-        // 이 옵션의 값은 @rollup/plugin-alias 의 entries 옵션으로 전달됩니다
-        // vite-tsconfig-paths 플러그인 사용으로 tsconfig.json 에서만 설정해 주어도 됨
-        //alias: [],
-
-        // 확장자를 생략한 가져오기를 위해 시도할 파일 확장자 목록
-        //extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
-
-        //preserveSymlinks: false
-    },
-
-    css: {
-        // CSS 전처리기로 전달할 옵션을 지정합니다.
-        //preprocessorOptions: {
-        //    scss: {
-        //        additionalData: `$injectedColor: orange;`
-        //    },
-        //    less: {
-        //        javascriptEnabled: true,
-        //        modifyVars: {
-        //            '@primary-color': '#1890ff',
-        //        },
-        //    },
-        //}
-    },
-
-    // 디펜던시의 사전 번들링을 강제
-    //force: true
-    //cacheDir: 'node_modules/.vite'
-
-    optimizeDeps: {
-        // 사전 번들링에서 제외할 디펜던시 목록
-        // CommonJS 디펜던시는 최적화에서 제외돼서는 안 됩니다.
-        //exclude: [],
-
-        // 기본적으로 node_modules 내부에 없는 연결된 패키지들은 미리 번들로 제공되지 않습니다.
-        // 이 옵션을 사용하여 연결된 패키지를 미리 번들로 묶을 수 있습니다.
-        //include: ['esm-dep > cjs-dep'],
-
-        // 디펜던시 스캐닝 및 최적화 중 Esbuild에 전달할 옵션
-        //esbuildOptions: []
-    },
-
-    build: {
-        //minify: 'esbuild',
-
-        // outDir이 프로젝트 루트 내부에 있는 경우 빌드할 때 이 곳을 비웁니다.
-        // outDir가 루트 외부에 있으면 실수로 중요한 파일을 제거하지 않도록 경고 메시지가 표시됩니다.
-        // 경고를 표시하지 않도록 이 옵션을 명시적으로 설정할 수 있습니다.
-        // 명령 줄에서는 --emptyOutDir로 이를 사용할 수 있습니다.
-        //emptyOutDir: true,
-
-        // 청크 크기 경고를 위한 제한값 입니다. (단위: KB)
-        //chunkSizeWarningLimit: 500
-    },
-
-    // https://rollupjs.org/guide/en/#big-list-of-options
-    //rollupOptions: {},
-
-    // SSR 옵션
-    // https://vitejs-kr.github.io/config/ssr-options.html#ssr-external
-    //ssr: {}
-
-    // 소스에서 치환할 문자열을 정의
-    // https://esbuild.github.io/api/#define
-    // 치환될 문자열은 ts 파일에서 타입체크를 통과 시켜 주어야함 (.d.ts 파일)
-    //define: {
-    //    "__APP_VERSION__": JSON.stringify(APP_VERSION) // '"'+ APP_VERSION +'"'
-    //}
-}
-
 /*
 //----------------------
 // 인텔리센스 설정
@@ -205,14 +74,149 @@ export default defineConfig(({command, mode}) => {
 
     //process.env.NODE_ENV = mode;
     console.log("(vite) NODE_ENV:", process.env.NODE_ENV);
-    console.log("(vite) APP_VERSION:", process.env.VITE_DESC);
+    console.log("(vite) APP_VERSION:", process.env.VITE_APP_VERSION);
 
     // 개발 서버 설정
-    if (mode === 'development') return _.merge(config, development());
+    if (mode === 'development') return _.merge(getConfig(), development());
 
     // 빌드 설정
-    return _.merge(config, production());
+    return _.merge(getConfig(), production());
 })
+
+// https://vitejs.dev/config/
+
+function getConfig(){
+    const config = {
+        //root: process.cwd(),
+
+        // assets 경로에 prefix로 붙음
+        // http://localhost:3000/packages/web/ 로 리다이렉팅 됨
+        //base: '/packages/web/',
+
+        //mode: process.env.NODE_ENV,
+
+        // '.env' 파일이 로드되는 디렉터리입니다.
+        // 절대 경로 또는 프로젝트 루트에 상대적인 경로일 수 있습니다.
+        //envDir: '/',
+        //envPrefix: 'VITE_',
+
+        // public 폴더 위치 지정: 정적 에셋들을 제공하는 디렉터리
+        // 이 디렉터리의 파일들은 개발 중에는 / 에서 제공되고 빌드 시에는 outDir의 루트로 복사됨
+        // 변형 없이 언제나 있는 그대로 제공되거나 복사됩니다.
+        // 값은 절대 파일 시스템 경로 또는 프로젝트 루트의 상대적인 경로중 하나가 될 수 있습니다.
+        //publicDir: 'public'
+        publicDir: process.env.WEB_PUBLIC_DIR || 'public',
+
+        // 정적 에셋 가져오기
+        // 빌트인 에셋 형식 목록: https://github.com/vitejs/vite/blob/main/packages/vite/src/node/constants.ts
+        //assetsInclude: ['**/*.gltf'],
+
+        plugins: [
+            react(),
+
+            // vite-tsconfig-paths
+            // resolve imports using TypeScript's path mapping.
+            // https://www.npmjs.com/package/vite-tsconfig-paths
+            // 일반적으로 Typescript 프로젝트에서는
+            // import * as ssl from '../../../services/ssl' 과 같은 import 경로를 피하기 위해
+            // 절대 경로 import를 많이 사용합니다.
+            // tsconfig.json 을 수정하면
+            // import * as ssl from '@src/services/ssl' 처럼 절대 경로로 import 할 수 있습니다.
+            tsconfigPaths(),
+
+            // 레거시 브라우저의 경우 `@vitejs/plugin-legacy` 플러그인을 이용
+            // 레거시 청크는 브라우저가 ESM을 지원하지 않는 경우에만 사용됨
+            // https://www.npmjs.com/package/@vitejs/plugin-legacy
+            legacy(),
+
+            //viteMockServe({
+            //    mockPath: 'mock',
+            //    supportTs: true,
+            //    watchFiles: true,
+            //    localEnabled: command === 'serve',
+            //    logger: true,
+            //}),
+
+            // vite-plugin-mkcert
+            // for vite https development services. (install the local CA certificate)
+            //mkcert()
+
+            // https://github.com/xiaoxian521/vite-plugin-remove-console
+            //removeConsole()
+        ],
+
+        resolve: {
+            // 이 옵션의 값은 @rollup/plugin-alias 의 entries 옵션으로 전달됩니다
+            // vite-tsconfig-paths 플러그인 사용으로 tsconfig.json 에서만 설정해 주어도 됨
+            //alias: [],
+
+            // 확장자를 생략한 가져오기를 위해 시도할 파일 확장자 목록
+            //extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+
+            //preserveSymlinks: false
+        },
+
+        css: {
+            // CSS 전처리기로 전달할 옵션을 지정합니다.
+            //preprocessorOptions: {
+            //    scss: {
+            //        additionalData: `$injectedColor: orange;`
+            //    },
+            //    less: {
+            //        javascriptEnabled: true,
+            //        modifyVars: {
+            //            '@primary-color': '#1890ff',
+            //        },
+            //    },
+            //}
+        },
+
+        // 디펜던시의 사전 번들링을 강제
+        //force: true
+        //cacheDir: 'node_modules/.vite'
+
+        optimizeDeps: {
+            // 사전 번들링에서 제외할 디펜던시 목록
+            // CommonJS 디펜던시는 최적화에서 제외돼서는 안 됩니다.
+            //exclude: [],
+
+            // 기본적으로 node_modules 내부에 없는 연결된 패키지들은 미리 번들로 제공되지 않습니다.
+            // 이 옵션을 사용하여 연결된 패키지를 미리 번들로 묶을 수 있습니다.
+            //include: ['esm-dep > cjs-dep'],
+
+            // 디펜던시 스캐닝 및 최적화 중 Esbuild에 전달할 옵션
+            //esbuildOptions: []
+        },
+
+        build: {
+            //minify: 'esbuild',
+
+            // outDir이 프로젝트 루트 내부에 있는 경우 빌드할 때 이 곳을 비웁니다.
+            // outDir가 루트 외부에 있으면 실수로 중요한 파일을 제거하지 않도록 경고 메시지가 표시됩니다.
+            // 경고를 표시하지 않도록 이 옵션을 명시적으로 설정할 수 있습니다.
+            // 명령 줄에서는 --emptyOutDir로 이를 사용할 수 있습니다.
+            //emptyOutDir: true,
+
+            // 청크 크기 경고를 위한 제한값 입니다. (단위: KB)
+            //chunkSizeWarningLimit: 500
+        },
+
+        // https://rollupjs.org/guide/en/#big-list-of-options
+        //rollupOptions: {},
+
+        // SSR 옵션
+        // https://vitejs-kr.github.io/config/ssr-options.html#ssr-external
+        //ssr: {}
+
+        // 소스에서 치환할 문자열을 정의
+        // https://esbuild.github.io/api/#define
+        // 치환될 문자열은 ts 파일에서 타입체크를 통과 시켜 주어야함 (.d.ts 파일)
+        //define: {
+        //    "__APP_VERSION__": JSON.stringify(APP_VERSION) // '"'+ APP_VERSION +'"'
+        //}
+    };
+    return config;
+}
 
 function development(): UserConfig {
 
@@ -249,7 +253,8 @@ function development(): UserConfig {
 
 function production(): UserConfig {
 
-    console.log(`(vite) production: root폴더/dist 폴더에 output 생성됨`);
+    const outDir = '../../dist/web';
+    console.log('\x1b[44m%s\x1b[0m', `(vite) production: ${outDir} 폴더에 output 생성됨`);
 
     return {
         //root: process.cwd(),
@@ -259,10 +264,10 @@ function production(): UserConfig {
         build: {
             //sourcemap: false,
 
-            // preview를 실행할려면 outDir 설정하지 않는다.
-            // (프로젝트 폴더/dist 폴더에 output 생성한다)
-            //outDir: '../../dist/web',
-            //emptyOutDir: true,
+            // preview를 실행하면 자동으로 outDir 경로의 파일을 실행해 줌
+            outDir: '../../dist/web',
+            // 기본값: outDir이 root 안에 있다면 true
+            emptyOutDir: true,
         },
     };
 }

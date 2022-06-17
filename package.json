@@ -13,7 +13,6 @@
         "packages/*"
     ],
     "private": true,
-    "type": "module",
     "scripts": {
 
         "web 프로젝트": "",
@@ -29,7 +28,7 @@
         "preview:server": "npm run preview -w @ss/server",
 
         "빌드 후 실행 환경": "",
-        "clean": "run-p clean:*",
+        "clean": "rimraf dist && run-p clean:*",
         "dev": "run-p -n -l dev:*",
         "build": "npm-run-all -n -l build:* -p preview:*"
     },

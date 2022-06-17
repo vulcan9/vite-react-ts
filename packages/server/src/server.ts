@@ -91,7 +91,7 @@ function serverRun() {
 
     // production
     app.listen(PORT, () => {
-        console.log(`Server listening at http://localhost:${PORT}`);
+        console.log('\x1b[44m%s\x1b[0m', 'API Server', `at http://localhost:${PORT}`);
     });
 }
 

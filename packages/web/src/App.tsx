@@ -1,5 +1,6 @@
 import {useState} from 'react'
-import logo from './logo.svg'
+// publicDir 폴더 참조 에셋 ('/')
+import logo from '/images/logo.svg'
 import './App.css'
 import hello from '@ss/shared'
 

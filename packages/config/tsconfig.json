@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Node",
         "useDefineForClassFields": true,
         "lib": [
             "DOM",
@@ -12,8 +14,6 @@
         "allowSyntheticDefaultImports": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
         "resolveJsonModule": true,
         "isolatedModules": true,
 
@@ -31,18 +31,30 @@
     "컴파일 옵션 참고": {
         "rootDir": "시작점",
         "removeComments": "true: 컴파일할 때 주석 제거",
-        "noImplicitAny": "true:  함수의 파라미터에 any 타입을 사용할 수 없음"
+        "noImplicitAny": "true:  함수의 파라미터에 any 타입을 사용할 수 없음",
+        "paths": {
+            "@/*": ["src/*"],
+            "@api/*": ["src/api/*"],
+            "@hooks/*": ["src/hooks/*"],
+            "@components/*": ["src/components/*"],
+            "@styles/*": ["src/styles/*"],
+            "@static/*": ["stc/static/*"],
+            "@utils/*": ["src/utils/*"],
+            "@types/*": ["src/types/*"],
+            "@layouts/*": ["src/layouts/*"],
+            "@pages/*": ["src/pages/*"],
+        }
     },
 
-    "프로젝트에 적용할때": {
+    "프로젝트에 적용할때 참고": {
         "extends": "@ss/config/tsconfig.json",
         "compilerOptions": {
             "sourceMap": false,
-            //"rootDir": "src"
+            "inlineSourceMap": false,
+            //"rootDir": "src 지정하면 프로젝트 오류 발생함"
         },
-        "include": [
-            "src"
-        ],
+        "include": [ "src" ],
+        "exclude": ["node_modules"],
         "references": [
             {"path": "./tsconfig.node.json"}
         ]
