@@ -28,7 +28,7 @@ process.env.NODE_ENV = env.MODE;
 // 서버 실행 파일 위치를 기준으로 상대 경로로 리소스 찾음
 // 개발시 경로: ~/packages/server/src'
 // 빌드시 경로: ~/dist/server
-// ES module에서 __filename, __dirname 변수 지원 안함 (__dirname is not defined)
+// ES module에서 CommonJS 변수 지원 안함 (__dirname is not defined)
 // __dirname : https://github.com/nodejs/node/pull/28282/files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
