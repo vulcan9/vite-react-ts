@@ -6,7 +6,7 @@
 
 import express, {NextFunction, Request, Response} from 'express';
 import router from './router';
-import path from 'path';
+import {dirname, resolve} from 'path';
 import morgan from 'morgan';
 import {fileURLToPath} from "url";
 
@@ -28,7 +28,14 @@ process.env.NODE_ENV = env.MODE;
 // 서버 실행 파일 위치를 기준으로 상대 경로로 리소스 찾음
 // 개발시 경로: ~/packages/server/src'
 // 빌드시 경로: ~/dist/server
-const __dirname = fileURLToPath(path.dirname(import.meta.url));
+// ES module에서 __filename, __dirname 변수 지원 안함 (__dirname is not defined)
+// __dirname : https://github.com/nodejs/node/pull/28282/files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// https://blog.logrocket.com/alternatives-dirname-node-js-es-modules/
+//const __dirname = fileURLToPath(new URL('./', import.meta.url));
+
 console.table({
     "(WWW) cwd": process.cwd(),
     "__dirname": __dirname,
@@ -90,7 +97,7 @@ function setStaticFolder(json: string = '') {
 
         pathString.split(',').forEach((folder='') => {
 
-            folder = path.resolve(__dirname, folder.trim());
+            folder = resolve(__dirname, folder.trim());
 
             if(prefix === '/'){
                 app.use(express.static(folder));
@@ -107,7 +114,7 @@ function setStaticFolder(json: string = '') {
 //------------------------------------
 
 function defaultResponse(req: Request, res: Response, next: NextFunction) {
-    //const index = path.resolve('index.html');
+    //const index = resolve('index.html');
 
     const html = `
 <ul>
