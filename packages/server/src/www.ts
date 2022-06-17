@@ -8,6 +8,11 @@ import express, {NextFunction, Request, Response} from 'express';
 import router from './router';
 import path from 'path';
 import morgan from 'morgan';
+import {fileURLToPath} from "url";
+
+//------------------------------------
+// 환경 변수 확인
+//------------------------------------
 
 // 개발 환경에서는 Vite가 환경 변수를 로드해서 세팅 해줌
 // production 환경에서는 import.meta.env 사용
@@ -20,9 +25,20 @@ const PORT = <number>(env.VITE_WWW_PORT || 3000);
 const STATIC_FOLDER = (env.VITE_WWW_STATIC_FOLDER || '');
 process.env.NODE_ENV = env.MODE;
 
-console.log('* NODE_ENV: ', process.env.NODE_ENV);
-console.log('* PORT: ', PORT);
-console.log('* STATIC_FOLDER: ', STATIC_FOLDER);
+// 서버 실행 파일 위치를 기준으로 상대 경로로 리소스 찾음
+// 개발시 경로: ~/packages/server/src'
+// 빌드시 경로: ~/dist/server
+const __dirname = fileURLToPath(path.dirname(import.meta.url));
+console.table({
+    "(WWW) cwd": process.cwd(),
+    "__dirname": __dirname,
+    "NODE_ENV": process.env.NODE_ENV,
+    "PORT": PORT
+});
+
+//------------------------------------
+// 서버 구성
+//------------------------------------
 
 const app = express();
 if (isProd) app.use(morgan('dev'));
@@ -33,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
 // 디버깅용 로그 코드 작업
-if (!isProd) app.use('*?/debug', debug);
+app.use('*?/debug', debug);
 
 // Serve API requests from the router
 app.use('/api', router);
@@ -59,17 +75,31 @@ serverRun();
 export const viteNodeApp = app;
 
 //------------------------------------
-// default response
+// static 폴더 설정
 //------------------------------------
 
 //app.use(express.static('../../public'));
 //app.use(express.static('../web/dist'));
-function setStaticFolder(pathString: string = '') {
-    pathString.split(',').forEach((folder) => {
-        folder = path.resolve(folder.trim());
-        app.use(express.static(folder));
-        //console.log('STATIC_FOLDER: ', folder);
-    });
+function setStaticFolder(json: string = '') {
+    console.log('* static 폴더 설정:');
+    const folderMap = JSON.parse(json);
+
+    for (const name in folderMap) {
+        const pathString = folderMap[name];
+        const prefix = name ? name : '/';
+
+        pathString.split(',').forEach((folder='') => {
+
+            folder = path.resolve(__dirname, folder.trim());
+
+            if(prefix === '/'){
+                app.use(express.static(folder));
+            }else{
+                app.use(prefix, express.static(folder));
+            }
+            console.log('[ %s ] : %s', prefix.padStart(10), folder);
+        });
+    }
 }
 
 //------------------------------------
@@ -78,7 +108,15 @@ function setStaticFolder(pathString: string = '') {
 
 function defaultResponse(req: Request, res: Response, next: NextFunction) {
     //const index = path.resolve('index.html');
-    res.status(200).send('success');
+
+    const html = `
+<ul>
+  <li><a href="/api/hello">shared 라이브러리 변수 사용 확인</li>
+  <li><a href="/api/world">public 폴더의 이미지를 사용 (동적 import)</li>
+  <li><a href="./debug">(*?/debug) 서버 콘솔에 로그 표시</li>
+</ul>`;
+
+    res.status(200).send(html);
 }
 
 //------------------------------------
@@ -114,6 +152,9 @@ function errorHandler(err: any, req: Request, res: Response, next: NextFunction)
 function debug(req: Request, res: Response, next: NextFunction) {
 
     console.log('-----------------------------------');
+    console.log('* cwd: ', process.cwd());
+    console.log(`* __dirname: ${__dirname}`);
+
     console.log('* originalUrl: ', req.originalUrl);
     console.log('* body: ', req.body);
     console.log('* query: ', req.query);

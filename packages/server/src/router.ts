@@ -20,11 +20,26 @@ router.get('/hello', async (_req: Request, res: Response, next: NextFunction) =>
 });
 router.get('/world', async (_req: Request, res: Response, next: NextFunction) => {
 
+    // 1. import 사용예 (상단 import 영역에 작성 후 사용)
     //import logo from '/images/logo.svg'
-    // 동적 import 사용예
-    const logo = await import('/images/logo.svg');
-    res.status(200).send(`<img src="${logo.default}">`);
-    console.log('Sent:', logo);
+    //res.status(200).send(`<img src="${logo}">`);
+    
+    // 2. url 사용
+    res.status(200).send(`<img src="/images/logo.svg">`);
+
+    // 3. await: 동적 import 사용 테스트
+    //const logo = await import('/images/logo.svg');
+    //res.status(200).send(`<img src="${logo.default}">`);
+    //console.log('Sent:', logo);
+
+    // 4. promise: 동적 import 사용 테스트
+    //import('/images/logo.svg').then((logo) => {
+    //    res.status(200).send(`<img src="${logo.default}">`);
+    //    console.log('Sent:', logo);
+    //});
+
+    //res.sendFile('/uploads/' + uid + '/' + file)
 });
+
 // module.exports = router;
 export default router;

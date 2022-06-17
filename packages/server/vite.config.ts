@@ -33,8 +33,7 @@ export default defineConfig(({command, mode}): UserConfig => {
 
     console.log("(vite) NODE_ENV:", process.env.NODE_ENV);
     console.log("(vite) APP_VERSION:", process.env.VITE_APP_VERSION);
-    console.error('(vite) STATIC_FOLDER: ', process.env.VITE_WWW_STATIC_FOLDER)
-
+    console.log('(vite) STATIC_FOLDER: ', process.env.VITE_WWW_STATIC_FOLDER);
 
     // 개발 서버 설정
     if (mode === 'development') return _.merge(getConfig(), development());
@@ -65,7 +64,7 @@ function getConfig() {
                 adapter: 'express',
 
                 // tell the plugin where is your project entry
-                appPath: './src/server.ts',
+                appPath: './src/www.ts',
 
                 // Optional, default: 'viteNodeApp'
                 // the name of named export of you app from the appPath file
@@ -110,3 +109,10 @@ function production(): UserConfig {
     }
 
 }
+
+/*
+build: {
+    ...config.build,
+    ssr: 'src/www.ts',
+},
+*/

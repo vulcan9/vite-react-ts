@@ -30,7 +30,9 @@
         "빌드 후 실행 환경": "",
         "clean": "rimraf dist && run-p clean:*",
         "dev": "run-p -n -l dev:*",
-        "build": "npm-run-all -n -l build:* -p preview:*"
+        "build": "npm-run-all -n -l build:* -p preview:*",
+
+        "public 폴더 복사": "배포시 필요하면 dist 폴더에 복사해줌"
     },
     "devDependencies": {
         "concurrently": "^7.2.1",
